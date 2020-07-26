@@ -18,10 +18,9 @@
 #include "gddragonbones.h"
 
 #if (VERSION_MAJOR == 3)
-    #define REG_CLASS_BIND_GODO  ClassDB::register_class
+# define REG_CLASS_BIND_GODO  ClassDB::register_class
 #else
-    #define REG_CLASS_BIND_GODO  ObjectTypeDB::register_type
-
+# define REG_CLASS_BIND_GODO  ObjectTypeDB::register_type
 #endif
 
 class ResourceFormatLoaderGDDragonBones : public ResourceFormatLoader
@@ -35,81 +34,82 @@ public:
 		Ref<GDDragonBones::GDDragonBonesResource> __p_ref(__p_res);
 		
 #if (VERSION_MAJOR == 3)
-        String __str_path_base = p_path.get_basename();
+		String __str_path_base = p_path.get_basename();
 #else
-        String __str_path_base = p_path.basename();
+		String __str_path_base = p_path.basename();
 #endif
-        __str_path_base.erase(__str_path_base.length() - strlen("_ske"), strlen("_ske"));
+		__str_path_base.erase(__str_path_base.length() - strlen("_ske"), strlen("_ske"));
 
-        // texture path
-        __p_ref->set_def_texture_path(__str_path_base + "_tex.png");
+		// texture path
+		__p_ref->set_def_texture_path(__str_path_base + "_tex.png");
 
-        // loading atlas data
-        bool __bret = __p_ref->load_texture_atlas_data(String(__str_path_base + "_tex.json").ascii().get_data());
-        ERR_FAIL_COND_V(!__bret, 0);
+		// loading atlas data
+		bool __bret = __p_ref->load_texture_atlas_data(String(__str_path_base + "_tex.json").ascii().get_data());
+		ERR_FAIL_COND_V(!__bret, 0);
 
-        // loading bones data
-        __bret = __p_ref->load_bones_data(p_path.ascii().get_data());
-        ERR_FAIL_COND_V(!__bret, 0);
+		// loading bones data
+		__bret = __p_ref->load_bones_data(p_path.ascii().get_data());
+		ERR_FAIL_COND_V(!__bret, 0);
 
 #ifdef TOOLS_ENABLED
-        __p_res->set_path(p_path, true);
+		__p_res->set_path(p_path, true);
 #else
 	__p_res->set_path(p_path);
 #endif
 		
 		float __tm_finish = OS::get_singleton()->get_ticks_msec();
-	        print_line("DB resource (" + p_path + ") loaded in " + itos(__tm_finish-__tm_start) + " msecs");
+			print_line("DB resource (" + p_path + ") loaded in " + itos(__tm_finish-__tm_start) + " msecs");
 		return __p_ref;
 	}
 
 
-    virtual void get_recognized_extensions(List<String> *p_extensions) const
-    {
+	virtual void get_recognized_extensions(List<String> *p_extensions) const
+	{
 		p_extensions->push_back("dbbin");
 		p_extensions->push_back("json");
 	}
 
-    virtual bool handles_type(const String& p_type) const
-    {
+	virtual bool handles_type(const String& p_type) const
+	{
 
 		return p_type=="GDDragonBonesResource";
 	}
 
 #if (VERSION_MAJOR == 3)
-    virtual String get_resource_type(const String &p_path) const
-    {
-        String el = p_path.get_extension().to_lower();
-        if ((el == "json" || el == "dbbin") && p_path.get_basename().to_lower().ends_with("_ske"))
-            return "GDDragonBonesResource";
-        return "";
-    }
+	virtual String get_resource_type(const String &p_path) const
+	{
+		String el = p_path.get_extension().to_lower();
+		if ((el == "json" || el == "dbbin") && p_path.get_basename().to_lower().ends_with("_ske"))
+			return "GDDragonBonesResource";
+		return "";
+	}
 #else
-    virtual String get_resource_type(const String &p_path) const
-    {
-        String el = p_path.extension().to_lower();
-        if ((el == "json" || el == "dbbin") && p_path.basename().to_lower().ends_with("_ske"))
-            return "GDDragonBonesResource";
-        return "";
-    }
+	virtual String get_resource_type(const String &p_path) const
+	{
+		String el = p_path.extension().to_lower();
+		if ((el == "json" || el == "dbbin") && p_path.basename().to_lower().ends_with("_ske"))
+			return "GDDragonBonesResource";
+		return "";
+	}
 #endif
 
 };
 
-static ResourceFormatLoaderGDDragonBones *resource_loader_GDDragonBones = NULL;
+static Ref<ResourceFormatLoaderGDDragonBones> resource_loader_dragonbones;
 
 void register_gd_dragonbones_types()
 {
-    REG_CLASS_BIND_GODO<GDDragonBones>();
-    REG_CLASS_BIND_GODO<GDDragonBones::GDDragonBonesResource>();
-	resource_loader_GDDragonBones = memnew( ResourceFormatLoaderGDDragonBones );
-	ResourceLoader::add_resource_format_loader(resource_loader_GDDragonBones);
+	REG_CLASS_BIND_GODO<GDDragonBones>();
+	REG_CLASS_BIND_GODO<GDDragonBones::GDDragonBonesResource>();
+
+	resource_loader_dragonbones.instance();
+	ResourceLoader::add_resource_format_loader(resource_loader_dragonbones);
 }
 
 void unregister_gd_dragonbones_types()
 {
-	if (resource_loader_GDDragonBones)
-		memdelete(resource_loader_GDDragonBones);
+	ResourceLoader::remove_resource_format_loader(resource_loader_dragonbones);
+	resource_loader_dragonbones.unref();
 }
 
 
