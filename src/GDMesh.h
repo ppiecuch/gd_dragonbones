@@ -68,7 +68,7 @@ public:
     {
         GDDisplay::set_modulate(_col);
         col_debug.a = modulate.a;
-        for(unsigned long i = 0; i < verticesColor.size(); ++i)
+        for(long i = 0; i < verticesColor.size(); ++i)
         {
 #if (VERSION_MAJOR == 3 && VERSION_MINOR >= 1)
             verticesColor.write[i] = modulate;

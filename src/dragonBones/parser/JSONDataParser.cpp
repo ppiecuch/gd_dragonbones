@@ -496,6 +496,11 @@ DisplayData* JSONDataParser::_parseDisplay(const rapidjson::Value& rawData)
 
     switch (type)
     {
+        case dragonBones::DisplayType::Path:
+        {
+            break;
+        }
+
         case dragonBones::DisplayType::Image:
         {
             const auto imageDisplay = BaseObject::borrowObject<ImageDisplayData>();
