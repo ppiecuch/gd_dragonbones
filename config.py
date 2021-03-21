@@ -1,5 +1,5 @@
 def can_build(env, platform):
-    return True
+    return platform != "android" or env["android_rtti"]
 
 
 def configure(env):
