@@ -1,12 +1,7 @@
 #include "core/version_generated.gen.h"
 
-#if (VERSION_MAJOR == 3)
 #include "core/class_db.h"
 #include "core/project_settings.h"
-#else
-#include "core/object_type_db.h"
-#include "core/globals.h"
-#endif
 
 #include "register_types.h"
 
@@ -17,27 +12,19 @@
 
 #include "gddragonbones.h"
 
-#if (VERSION_MAJOR == 3)
 # define REG_CLASS_BIND_GODO  ClassDB::register_class
-#else
-# define REG_CLASS_BIND_GODO  ObjectTypeDB::register_type
-#endif
 
 class ResourceFormatLoaderGDDragonBones : public ResourceFormatLoader
 {
 
 public:
-	virtual RES load(const String& p_path, const String& p_original_path = "", Error *p_err=NULL) {
+	virtual RES load(const String& p_path, const String& p_original_path = "", Error *p_err = nullptr, bool p_no_subresource_cache = false) {
 
 		float __tm_start = OS::get_singleton()->get_ticks_msec();
 		GDDragonBones::GDDragonBonesResource* __p_res = memnew(GDDragonBones::GDDragonBonesResource);
 		Ref<GDDragonBones::GDDragonBonesResource> __p_ref(__p_res);
 		
-#if (VERSION_MAJOR == 3)
 		String __str_path_base = p_path.get_basename();
-#else
-		String __str_path_base = p_path.basename();
-#endif
 		__str_path_base.erase(__str_path_base.length() - strlen("_ske"), strlen("_ske"));
 
 		// texture path
@@ -75,7 +62,6 @@ public:
 		return p_type=="GDDragonBonesResource";
 	}
 
-#if (VERSION_MAJOR == 3)
 	virtual String get_resource_type(const String &p_path) const
 	{
 		String el = p_path.get_extension().to_lower();
@@ -83,16 +69,6 @@ public:
 			return "GDDragonBonesResource";
 		return "";
 	}
-#else
-	virtual String get_resource_type(const String &p_path) const
-	{
-		String el = p_path.extension().to_lower();
-		if ((el == "json" || el == "dbbin") && p_path.basename().to_lower().ends_with("_ske"))
-			return "GDDragonBonesResource";
-		return "";
-	}
-#endif
-
 };
 
 static Ref<ResourceFormatLoaderGDDragonBones> resource_loader_dragonbones;
